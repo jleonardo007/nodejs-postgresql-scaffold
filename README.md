@@ -5,7 +5,7 @@ CLI tool to generate a complete backend project structure optimized for Node.js,
 ## Installation
 
 ```bash
-npm install -g express-typeorm-postgresql-scaffold
+npm install -g express-ts-scaffold
 ```
 
 ## Usage
