@@ -28,13 +28,15 @@ The CLI will prompt you for:
 project-name/
 ├── src/
 │   ├── config/
-│   │   └── index.ts
+│   │   ├── database.ts
+│   │   ├── environment.ts
+│   │   └── logger.ts
 │   ├── database/
 │   │   ├── migrations/
 │   │   │   └── index.ts
 │   │   ├── seeds/
 │   │   │   └── index.ts
-│   │   └── index.ts
+│   │   └── datasource.ts
 │   ├── entities/
 │   │   └── index.ts
 │   ├── repositories/
@@ -48,9 +50,8 @@ project-name/
 │   ├── validators/
 │   │   └── index.ts
 │   ├── routes/
-│   │   ├── v1/
-│   │   │   └── index.ts
-│   │   └── index.ts
+│   │   └── v1/
+│   │       └── index.ts
 │   ├── types/
 │   │   └── index.ts
 │   ├── utils/
@@ -60,17 +61,13 @@ project-name/
 │   ├── jobs/
 │   │   └── index.ts
 │   ├── queues/
-│   │   ├── processors/
-│   │   │   └── index.ts
 │   │   └── index.ts
 │   ├── exceptions/
 │   │   └── index.ts
 │   ├── decorators/
 │   │   └── index.ts
 │   ├── docs/
-│   │   ├── schemas/
-│   │   │   └── index.ts
-│   │   └── index.ts
+│   │   └── swagger.config.ts
 │   ├── app.ts
 │   └── server.ts
 ├── tests/
