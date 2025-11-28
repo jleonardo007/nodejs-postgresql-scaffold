@@ -1,0 +1,30 @@
+{
+  "name": "express-ts-scaffold",
+  "version": "0.0.1",
+  "description": "Script to generate a complete backend folder structure",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "create-backend": "./bin/index.js"
+  },
+  "scripts": {
+    "create": "node bin/index.js"
+  },
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "keywords": [
+    "backend",
+    "scaffold",
+    "nodejs",
+    "expressjs",
+    "typeorm",
+    "postgresql"
+  ],
+  "author": "Leonardo Bravo",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
