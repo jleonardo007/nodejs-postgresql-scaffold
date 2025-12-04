@@ -1,6 +1,6 @@
 {
   "name": "express-ts-scaffold",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Script to generate a complete backend folder structure",
   "type": "module",
   "main": "index.js",
