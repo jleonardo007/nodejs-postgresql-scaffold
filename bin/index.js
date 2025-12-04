@@ -22,15 +22,15 @@ function createStructure(basePath, struct) {
   for (const [key, value] of Object.entries(struct)) {
     if (key === '_files') {
       // Create files in current directory, not a folder
-      value.forEach((file) => {
-        fs.writeFileSync(path.join(basePath, file), '', 'utf8');
+      value.forEach((item) => {
+        fs.writeFileSync(path.join(basePath, item.file), item.template, 'utf8');
       });
     } else if (Array.isArray(value)) {
       // Create directory with files
       const dirPath = path.join(basePath, key);
       fs.mkdirSync(dirPath, { recursive: true });
-      value.forEach((file) => {
-        fs.writeFileSync(path.join(dirPath, file), '', 'utf8');
+      value.forEach((item) => {
+        fs.writeFileSync(path.join(dirPath, item.file), item.template, 'utf8');
       });
     } else if (typeof value === 'object' && value !== null) {
       // Create subdirectory and recurse
