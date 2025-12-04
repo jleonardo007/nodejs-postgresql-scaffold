@@ -55,36 +55,41 @@ function createConfigFiles({ projectPath, metadata }) {
 }
 
 async function main() {
-  const metadata = {
-    name: await question('Project name: '),
-    version: (await question('Version (1.0.0): ')) || DEFAULTS.version,
-    description: await question('Description: '),
-    author: await question('Author: '),
-    license: (await question('License (MIT): ')) || DEFAULTS.license,
-  };
+  try {
+    const metadata = {
+      name: await question('Project name: '),
+      version: (await question('Version (1.0.0): ')) || DEFAULTS.version,
+      description: await question('Description: '),
+      author: await question('Author: '),
+      license: (await question('License (MIT): ')) || DEFAULTS.license,
+    };
 
-  const projectPath = path.join(process.cwd(), metadata.name);
+    const projectPath = path.join(process.cwd(), metadata.name);
 
-  checkNodeVersion();
-  checkExistingProject(projectPath);
+    checkNodeVersion();
+    checkExistingProject(projectPath);
 
-  fs.mkdirSync(projectPath, { recursive: true });
+    fs.mkdirSync(projectPath, { recursive: true });
 
-  // Create first level directories manually to avoid duplication
-  for (const [key, value] of Object.entries(structure)) {
-    const dirPath = path.join(projectPath, key);
-    fs.mkdirSync(dirPath, { recursive: true });
+    // Create first level directories manually to avoid duplication
+    for (const [key, value] of Object.entries(structure)) {
+      const dirPath = path.join(projectPath, key);
+      fs.mkdirSync(dirPath, { recursive: true });
 
-    if (typeof value === 'object' && !Array.isArray(value)) {
-      createStructure(dirPath, value);
-    } else if (Array.isArray(value)) {
-      value.forEach((file) => {
-        fs.writeFileSync(path.join(dirPath, file), '', 'utf8');
-      });
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        createStructure(dirPath, value);
+      } else if (Array.isArray(value)) {
+        value.forEach((file) => {
+          fs.writeFileSync(path.join(dirPath, file), '', 'utf8');
+        });
+      }
     }
-  }
 
-  createConfigFiles({ projectPath, metadata });
+    createConfigFiles({ projectPath, metadata });
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
   process.exit(1);
 }
 
