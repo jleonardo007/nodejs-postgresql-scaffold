@@ -21,6 +21,8 @@ The CLI will prompt you for:
 - Description
 - Author
 - License (default: MIT)
+- Add Docker (default: false)
+- Add Githooks (default: false)
 
 ## Generated Structure
 
