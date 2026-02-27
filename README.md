@@ -55,15 +55,19 @@ project-name/
 │   │   └── index.ts
 │   ├── middlewares/
 │   │   └── index.ts
-│   ├── validators/
+│   │   └── dto-validation.ts
+│   │   └── error-handler.ts
+│   ├── dtos/
 │   │   └── index.ts
 │   ├── routes/
 │   │   └── v1/
 │   │       └── index.ts
 │   ├── types/
 │   │   └── index.ts
+│   │   └── express.d.ts
 │   ├── utils/
 │   │   └── index.ts
+│   │   └── database.ts
 │   ├── constants/
 │   │   └── index.ts
 │   ├── jobs/
@@ -72,6 +76,12 @@ project-name/
 │   │   └── index.ts
 │   ├── exceptions/
 │   │   └── index.ts
+│   │   └── base-exception.ts
+│   │   └── conflict-exception.ts
+│   │   └── forbidden-exception.ts
+│   │   └── notfound-exception.ts
+│   │   └── unauthorized-exception.ts
+│   │   └── validation-exception.ts
 │   ├── decorators/
 │   │   └── index.ts
 │   ├── docs/
@@ -90,8 +100,6 @@ project-name/
 │   ├── helpers/
 │   │   └── index.ts
 │   └── setup.ts
-├── scripts/
-│   └── index.ts
 ├── logs/
 │   └── .gitkeep
 ├── .env.example
@@ -123,7 +131,7 @@ This structure is optimized for:
 - **services/** - Business logic layer
 - **controllers/** - Route handlers
 - **middlewares/** - Express middlewares (auth, validation, error handling)
-- **validators/** - Request validation schemas
+- **dtos/** - Request validation schemas
 - **routes/** - API route definitions (versioned)
 - **types/** - TypeScript type definitions
 - **utils/** - Helper functions
