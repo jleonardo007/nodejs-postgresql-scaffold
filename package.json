@@ -14,7 +14,8 @@
     "lint:check": "eslint . --max-warnings 0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "validate": "npm run lint:check && npm run format:check"
+    "validate": "npm run lint:check && npm run format:check",
+    "prepare": "husky"
   },
   "files": [
     "bin",
@@ -38,10 +39,14 @@
     "chalk": "^5.6.2"
   },
   "devDependencies": {
+    "@commitlint/cli": "20.5.0",
+    "@commitlint/config-conventional": "20.5.0",
     "@eslint/js": "10.0.1",
     "eslint": "10.2.1",
     "eslint-config-prettier": "10.1.8",
     "globals": "17.5.0",
+    "husky": "9.1.7",
+    "lint-staged": "16.4.0",
     "prettier": "3.8.3"
   }
 }
