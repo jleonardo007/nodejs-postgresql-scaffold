@@ -5,9 +5,10 @@
     "moduleResolution": "bundler",
     "strict": true,
     "paths": {
+      "#lib": ["./lib/index.js"],
       "#lib/*": ["./lib/*"]
     }
   },
-  "include": ["bin/**/*", "lib/**/*"],
+  "include": ["bin/**/*", "lib/**/*", "tests/**/*"],
   "exclude": ["node_modules"]
 }
