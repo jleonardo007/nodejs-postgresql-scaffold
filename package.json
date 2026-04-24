@@ -1,6 +1,6 @@
 {
   "name": "nodejs-postgresql-scaffold",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Script to generate a complete backend folder structure",
   "type": "module",
   "main": "index.js",
