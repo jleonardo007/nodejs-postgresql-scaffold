@@ -25,6 +25,10 @@
     "bin",
     "lib"
   ],
+  "imports": {
+    "#lib": "./lib/index.js",
+    "#lib/*": "./lib/*"
+  },
   "keywords": [
     "backend",
     "scaffold",
