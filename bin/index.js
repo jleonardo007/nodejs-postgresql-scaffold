@@ -10,14 +10,7 @@ import {
   DEFAULTS,
   checkNodeVersion,
   checkExistingProject,
-  setPackageJson,
-  tsconfig,
-  nodemonConfig,
-  prettierConfig,
-  jestConfig,
-  eslintConfig,
-  env,
-  gitignore,
+  checkProjectPath,
   structure,
   createStructure,
   createConfigFiles,
@@ -60,6 +53,7 @@ async function main() {
     const addGitHooks = extras.includes('githooks');
 
     checkNodeVersion();
+    checkProjectPath(projectPath);
     checkExistingProject(projectPath);
 
     fs.mkdirSync(projectPath, { recursive: true });
