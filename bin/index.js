@@ -11,9 +11,10 @@ import {
   checkNodeVersion,
   checkExistingProject,
   checkProjectPath,
-  structure,
+  buildStructure,
   createStructure,
   createConfigFiles,
+  runCliContext,
 } from '#lib';
 
 async function main() {
@@ -52,27 +53,39 @@ async function main() {
     const addDocker = extras.includes('docker');
     const addGitHooks = extras.includes('githooks');
 
+    const ctx = {
+      metadata,
+      projectPath,
+      flags: {
+        addDocker,
+        addGitHooks,
+      },
+    };
+
     checkNodeVersion();
     checkProjectPath(projectPath);
     checkExistingProject(projectPath);
 
     fs.mkdirSync(projectPath, { recursive: true });
 
-    // Create first level directories manually to avoid duplication
-    for (const [key, value] of Object.entries(structure)) {
-      const dirPath = path.join(projectPath, key);
-      fs.mkdirSync(dirPath, { recursive: true });
+    await runCliContext(ctx, () => {
+      const structure = buildStructure();
+      // Create first level directories manually to avoid duplication
+      for (const [key, value] of Object.entries(structure)) {
+        const dirPath = path.join(projectPath, key);
+        fs.mkdirSync(dirPath, { recursive: true });
 
-      if (typeof value === 'object' && !Array.isArray(value)) {
-        createStructure(dirPath, value);
-      } else if (Array.isArray(value)) {
-        value.forEach((file) => {
-          fs.writeFileSync(path.join(dirPath, file), '', 'utf8');
-        });
+        if (typeof value === 'object' && !Array.isArray(value)) {
+          createStructure(dirPath, value);
+        } else if (Array.isArray(value)) {
+          value.forEach((file) => {
+            fs.writeFileSync(path.join(dirPath, file), '', 'utf8');
+          });
+        }
       }
-    }
 
-    createConfigFiles({ projectPath, metadata, addDocker, addGitHooks });
+      createConfigFiles();
+    });
 
     process.chdir(projectPath);
     execSync('git init', { stdio: 'inherit' });
