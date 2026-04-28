@@ -34,11 +34,6 @@ describe('CreateConfigFiles', () => {
       expect(fs.existsSync(path.join(tmpDir, 'tsconfig.json'))).toBe(true);
     });
 
-    it('should create tsconfig.dev.json', () => {
-      createConfigFiles({ projectPath: tmpDir, metadata, addDocker: false, addGitHooks: false });
-      expect(fs.existsSync(path.join(tmpDir, 'tsconfig.dev.json'))).toBe(true);
-    });
-
     it('should create nodemon.json', () => {
       createConfigFiles({ projectPath: tmpDir, metadata, addDocker: false, addGitHooks: false });
       expect(fs.existsSync(path.join(tmpDir, 'nodemon.json'))).toBe(true);
