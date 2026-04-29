@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { setPackageJson, prettierConfig, tsconfig, tsconfigdev, nodemonConfig } from '#lib';
+import { buildPackageJson, prettierConfig, tsconfig, nodemonConfig } from '#lib';
+import { withCliContext } from '../helpers/cli-context';
+import { createCliContext } from '../fixtures/cli-context';
 
 describe('PrettierConfig', () => {
   it('should have all correct properties', () => {
@@ -36,7 +38,7 @@ describe('NodemonConfig', () => {
 
 describe('Tsconfig', () => {
   it('should have correct include and exclude', () => {
-    expect(tsconfig.include).toEqual(['src/**/*']);
+    expect(tsconfig.include).toEqual(['src/**/*', 'scripts/**/*']);
     expect(tsconfig.exclude).toEqual([
       'node_modules',
       'dist',
@@ -48,17 +50,17 @@ describe('Tsconfig', () => {
 
   it('should have all correct compilerOptions', () => {
     expect(tsconfig.compilerOptions).toMatchObject({
-      target: 'ES2022',
-      module: 'commonjs',
-      lib: ['ES2022'],
+      target: 'es2024',
+      module: 'nodenext',
+      lib: ['ES2024'],
       outDir: './dist',
-      rootDir: './src',
+      rootDir: '.',
       removeComments: true,
       strict: true,
       esModuleInterop: true,
       skipLibCheck: true,
       forceConsistentCasingInFileNames: true,
-      moduleResolution: 'node',
+      moduleResolution: 'nodenext',
       resolveJsonModule: true,
       experimentalDecorators: true,
       emitDecoratorMetadata: true,
@@ -74,63 +76,63 @@ describe('Tsconfig', () => {
       noUnusedParameters: true,
       noImplicitReturns: true,
       noFallthroughCasesInSwitch: true,
-      baseUrl: '.',
     });
   });
 
   it('should have all correct paths', () => {
     expect(tsconfig.compilerOptions.paths).toMatchObject({
-      '@config': ['src/config/index'],
-      '@config/*': ['src/config/*'],
-      '@controllers': ['src/controllers/index'],
-      '@controllers/*': ['src/controllers/*'],
-      '@entities': ['src/entities/index'],
-      '@entities/*': ['src/entities/*'],
-      '@exceptions': ['src/exceptions/index'],
-      '@exceptions/*': ['src/exceptions/*'],
-      '@middlewares': ['src/middlewares/index'],
-      '@middlewares/*': ['src/middlewares/*'],
-      '@routes': ['src/routes/index'],
-      '@routes/*': ['src/routes/*'],
-      '@services': ['src/services/index'],
-      '@services/*': ['src/services/*'],
-      '@utils': ['src/utils/index'],
-      '@utils/*': ['src/utils/*'],
+      '@appTypes': ['./src/types/index'],
+      '@appTypes/*': ['./src/types/*'],
+      '@config': ['./src/config/index'],
+      '@config/*': ['./src/config/*'],
+      '@constants': ['./src/constants/index'],
+      '@constants/*': ['./src/constants/*'],
+      '@controllers': ['./src/controllers/index'],
+      '@controllers/*': ['./src/controllers/*'],
+      '@database': ['./src/database/index'],
+      '@database/*': ['./src/database/*'],
+      '@decorators': ['./src/decorators/index'],
+      '@decorators/*': ['./src/decorators/*'],
+      '@docs': ['./src/docs/index'],
+      '@docs/*': ['./src/docs/*'],
+      '@dtos': ['./src/dtos/index'],
+      '@dtos/*': ['./src/dtos/*'],
+      '@entities': ['./src/entities/index'],
+      '@entities/*': ['./src/entities/*'],
+      '@exceptions': ['./src/exceptions/index'],
+      '@exceptions/*': ['./src/exceptions/*'],
+      '@jobs': ['./src/jobs/index'],
+      '@jobs/*': ['./src/jobs/*'],
+      '@logging': ['./src/logging/index'],
+      '@logging/*': ['./src/logging/*'],
+      '@middlewares': ['./src/middlewares/index'],
+      '@middlewares/*': ['./src/middlewares/*'],
+      '@queues': ['./src/queues/index'],
+      '@queues/*': ['./src/queues/*'],
+      '@repositories': ['./src/repositories/index'],
+      '@repositories/*': ['./src/repositories/*'],
+      '@routes': ['./src/routes/index'],
+      '@routes/*': ['./src/routes/*'],
+      '@services': ['./src/services/index'],
+      '@services/*': ['./src/services/*'],
+      '@scripts': ['./src/scripts/index'],
+      '@scripts/*': ['./src/scripts/*'],
+      '@utils': ['./src/utils/index'],
+      '@utils/*': ['./src/utils/*'],
     });
   });
 });
 
-describe('TsconfigDev', () => {
-  it('should extend tsconfig.json', () => {
-    expect(tsconfigdev.extends).toBe('./tsconfig.json');
-  });
+describe('PackageJson', async () => {
+  let pkg;
 
-  it('should include tests and scripts', () => {
-    expect(tsconfigdev.include).toContain('tests/**/*');
-    expect(tsconfigdev.include).toContain('scripts/**/*');
+  const ctx = createCliContext();
+  await withCliContext(ctx, async () => {
+    pkg = await buildPackageJson();
   });
-
-  it('should have correct compilerOptions', () => {
-    expect(tsconfigdev.compilerOptions).toEqual({
-      rootDir: '.',
-      noEmit: true,
-      incremental: false,
-    });
-  });
-});
-
-describe('PackageJson', () => {
-  const metadata = {
-    name: 'test-project',
-    version: '1.0.0',
-    description: 'Test project',
-    author: 'Test Author',
-    license: 'MIT',
-  };
 
   it('should generate correct metadata', () => {
-    const pkg = setPackageJson({ ...metadata, addGitHooks: false });
-    expect(pkg.name).toBe('test-project');
+    expect(pkg.name).toBe('test-app');
     expect(pkg.version).toBe('1.0.0');
     expect(pkg.description).toBe('Test project');
     expect(pkg.author).toBe('Test Author');
@@ -138,8 +140,8 @@ describe('PackageJson', () => {
   });
 
   it('should have correct main and scripts', () => {
-    const pkg = setPackageJson({ ...metadata, addGitHooks: false });
     expect(pkg.main).toBe('dist/server.js');
+    expect(pkg.scripts.cli).toBeDefined();
     expect(pkg.scripts.dev).toBeDefined();
     expect(pkg.scripts.build).toBeDefined();
     expect(pkg.scripts.start).toBeDefined();
@@ -150,15 +152,13 @@ describe('PackageJson', () => {
   });
 
   it('should have correct engines', () => {
-    const pkg = setPackageJson({ ...metadata, addGitHooks: false });
     expect(pkg.engines).toEqual({
-      node: '>=20.0.0',
+      node: '>=22.0.0',
       npm: '>=9.0.0',
     });
   });
 
   it('should have all core dependencies', () => {
-    const pkg = setPackageJson({ ...metadata, addGitHooks: false });
     const deps = Object.keys(pkg.dependencies);
     expect(deps).toContain('express');
     expect(deps).toContain('typeorm');
@@ -172,7 +172,6 @@ describe('PackageJson', () => {
   });
 
   it('should have all core devDependencies', () => {
-    const pkg = setPackageJson({ ...metadata, addGitHooks: false });
     const devDeps = Object.keys(pkg.devDependencies);
     expect(devDeps).toContain('typescript');
     expect(devDeps).toContain('jest');
@@ -183,19 +182,23 @@ describe('PackageJson', () => {
   });
 
   it('should not include git hooks when addGitHooks is false', () => {
-    const pkg = setPackageJson({ ...metadata, addGitHooks: false });
     expect(pkg.scripts.prepare).toBeUndefined();
     expect(pkg.devDependencies.husky).toBeUndefined();
     expect(pkg.devDependencies['@commitlint/cli']).toBeUndefined();
     expect(pkg.devDependencies['lint-staged']).toBeUndefined();
   });
 
-  it('should include git hooks when addGitHooks is true', () => {
-    const pkg = setPackageJson({ ...metadata, addGitHooks: true });
-    expect(pkg.scripts.prepare).toBe('husky');
-    expect(pkg.devDependencies.husky).toBeDefined();
-    expect(pkg.devDependencies['@commitlint/cli']).toBeDefined();
-    expect(pkg.devDependencies['lint-staged']).toBeDefined();
-    expect(pkg.devDependencies.commitlint).toBeDefined();
+  it('should include git hooks when addGitHooks is true', async () => {
+    let newPkg;
+    const newCtx = createCliContext({ flags: { addGitHooks: true } });
+    await withCliContext(newCtx, async () => {
+      newPkg = await buildPackageJson();
+    });
+
+    expect(newPkg.scripts.prepare).toBe('husky');
+    expect(newPkg.devDependencies.husky).toBeDefined();
+    expect(newPkg.devDependencies['@commitlint/cli']).toBeDefined();
+    expect(newPkg.devDependencies['lint-staged']).toBeDefined();
+    expect(newPkg.devDependencies.commitlint).toBeDefined();
   });
 });

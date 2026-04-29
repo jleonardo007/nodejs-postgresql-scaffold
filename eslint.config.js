@@ -7,10 +7,11 @@ export default [
   js.configs.recommended,
   prettier,
   {
-    files: ['bin/**/*.js', 'lib/**/*.js'],
+    files: ['bin/**/*.js', 'lib/**/*.js', 'tests/**/*.js'],
     languageOptions: {
       globals: {
         ...globals.node,
+        ...globals.jest,
       },
     },
     rules: {

@@ -2,10 +2,18 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { createStructure, structure } from '#lib';
+import { createStructure, buildStructure } from '#lib';
+import { withCliContext } from '../helpers/cli-context';
+import { createCliContext } from '../fixtures/cli-context';
 
-describe('CreateStructure', () => {
+describe('CreateStructure', async () => {
   let tmpDir;
+  let structure;
+
+  const ctx = createCliContext();
+  await withCliContext(ctx, async () => {
+    structure = await buildStructure();
+  });
 
   beforeEach(() => {
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'srvkit-test-'));
@@ -35,7 +43,6 @@ describe('CreateStructure', () => {
   it('should create src/middlewares with correct files', () => {
     createStructure(tmpDir, structure);
     expect(fs.existsSync(path.join(tmpDir, 'src', 'middlewares', 'index.ts'))).toBe(true);
-    expect(fs.existsSync(path.join(tmpDir, 'src', 'middlewares', 'error-handler.ts'))).toBe(true);
     expect(fs.existsSync(path.join(tmpDir, 'src', 'middlewares', 'dto-validation.ts'))).toBe(true);
   });
 

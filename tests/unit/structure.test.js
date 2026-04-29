@@ -1,7 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { structure } from '#lib';
+import { buildStructure } from '#lib';
+import { withCliContext } from '../helpers/cli-context';
+import { createCliContext } from '../fixtures/cli-context';
 
-describe('Structure', () => {
+describe('Structure', async () => {
+  let structure;
+
+  const ctx = createCliContext();
+  await withCliContext(ctx, async () => {
+    structure = await buildStructure();
+  });
+
   describe('Directories', () => {
     it('should have src directory', () => {
       expect(structure.src).toBeDefined();
@@ -9,6 +18,10 @@ describe('Structure', () => {
 
     it('should have tests directory', () => {
       expect(structure.tests).toBeDefined();
+    });
+
+    it('should have scripts directory', () => {
+      expect(structure.scripts).toBeDefined();
     });
   });
 
@@ -23,7 +36,6 @@ describe('Structure', () => {
     it('should have middlewares directory with correct files', () => {
       const files = structure.src.middlewares._files.map((f) => f.file);
       expect(files).toContain('index.ts');
-      expect(files).toContain('error-handler.ts');
       expect(files).toContain('dto-validation.ts');
     });
 
@@ -72,7 +84,7 @@ describe('Structure', () => {
   describe('Structure shape', () => {
     it('should only have src and tests as top level directories', () => {
       const keys = Object.keys(structure);
-      expect(keys).toEqual(['src', 'tests']);
+      expect(keys).toEqual(['scripts', 'src', 'tests']);
     });
 
     it('should only have expected directories in src', () => {
@@ -84,6 +96,7 @@ describe('Structure', () => {
         'repositories',
         'services',
         'controllers',
+        'logging',
         'middlewares',
         'dtos',
         'routes',
@@ -95,6 +108,7 @@ describe('Structure', () => {
         'exceptions',
         'decorators',
         'docs',
+        'scripts',
         '_files',
       ]);
     });
