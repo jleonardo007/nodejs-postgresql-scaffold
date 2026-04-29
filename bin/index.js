@@ -29,17 +29,25 @@ async function main() {
         validate: (value) => value.trim() !== '' || 'Project name is required',
         filter: (value) => value.trim(),
       }),
-      version: await input({ message: 'Version:', default: DEFAULTS.version }),
+      version: await input({
+        message: 'Version:',
+        default: DEFAULTS.version,
+      }),
       description: await input({ message: 'Description:' }),
       author: await input({ message: 'Author:' }),
-      license: await input({ message: 'License:', default: DEFAULTS.license }),
+      license: await input({
+        message: 'License:',
+        default: DEFAULTS.license,
+      }),
     };
 
     const extras = await checkbox({
       message: 'Extend your scaffold:',
       choices: [
         {
-          name: `${chalk.cyan('Docker')} ${chalk.dim('Dockerfile · docker-compose · .dockerignore')}`,
+          name: `${chalk.cyan('Docker')} ${chalk.dim(
+            'Dockerfile · docker-compose · .dockerignore'
+          )}`,
           value: 'docker',
         },
         {
@@ -87,10 +95,19 @@ async function main() {
       createConfigFiles();
     });
 
-    process.chdir(projectPath);
-    execSync('git init', { stdio: 'inherit' });
-    console.log(chalk.green.bold('✅ Git repo created'));
+    const excecOptions = { cwd: projectPath, stdio: 'inherit' };
 
+    execSync('git init', excecOptions);
+    console.log(chalk.cyan.bold('📦 Installing dependencies...'));
+    execSync('npm install', excecOptions);
+    console.log(chalk.green.bold('📦 Dependencies installed'));
+
+    execSync('npm run format', excecOptions);
+    execSync('git branch -M main', excecOptions);
+    execSync('git add .', excecOptions);
+    execSync('git commit -m "chore: initial commit"', excecOptions);
+
+    console.log(chalk.green.bold('✅ Git repo created'));
     console.log(`
     ${chalk.green.bold('✅ Project created')}
     ${chalk.dim('Name')} ${chalk.white.bold(metadata.name)}
@@ -99,7 +116,9 @@ async function main() {
     ${addGitHooks ? chalk.cyan('🪝 Git Hooks enabled') : ''}
 
     ${chalk.bold('Next steps:')}
-    ${chalk.cyan('$')} cd ${metadata.name} && npm install ${addGitHooks ? `${chalk.dim('# prepare script runs husky install automatically')}` : ''}
+    ${chalk.cyan('$')} cd ${metadata.name} && npm install ${
+      addGitHooks ? `${chalk.dim('# prepare script runs husky install automatically')}` : ''
+    }
 `);
   } catch (error) {
     console.error(chalk.red('\n✖ Error:'), error.message);
