@@ -15,6 +15,13 @@ import {
   createStructure,
   createConfigFiles,
   runCliContext,
+  validateProjectName,
+  sanitizeProjectName,
+  validateVersion,
+  validateDescription,
+  validateAuthor,
+  validateLicense,
+  sanitizeText,
 } from '#lib';
 
 async function main() {
@@ -26,18 +33,34 @@ async function main() {
     const metadata = {
       name: await input({
         message: 'Project name:',
-        validate: (value) => value.trim() !== '' || 'Project name is required',
-        filter: (value) => value.trim(),
+        validate: validateProjectName,
+        filter: sanitizeProjectName,
       }),
+
       version: await input({
-        message: 'Version:',
+        message: 'Version (e.g. 1.0.0):',
         default: DEFAULTS.version,
+        validate: validateVersion,
+        filter: (v) => v.trim(),
       }),
-      description: await input({ message: 'Description:' }),
-      author: await input({ message: 'Author:' }),
+
+      description: await input({
+        message: 'Description:',
+        validate: validateDescription,
+        filter: sanitizeText,
+      }),
+
+      author: await input({
+        message: 'Author:',
+        validate: validateAuthor,
+        filter: sanitizeText,
+      }),
+
       license: await input({
-        message: 'License:',
+        message: 'License (e.g. MIT):',
         default: DEFAULTS.license,
+        validate: validateLicense,
+        filter: (v) => v.trim(),
       }),
     };
 
