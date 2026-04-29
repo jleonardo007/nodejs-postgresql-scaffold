@@ -109,7 +109,6 @@ describe('CreateConfigFiles', () => {
       });
 
       it('should create git hooks files', () => {
-        console.log('files:', fs.readdirSync(tmpDir));
         expect(fs.existsSync(path.join(tmpDir, 'commitlint.config.mjs'))).toBe(true);
         expect(fs.existsSync(path.join(tmpDir, 'lint-staged.config.mjs'))).toBe(true);
         expect(fs.existsSync(path.join(tmpDir, '.husky', 'commit-msg'))).toBe(true);
