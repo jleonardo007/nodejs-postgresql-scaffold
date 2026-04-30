@@ -146,4 +146,19 @@ describe('CreateConfigFiles', () => {
       });
     });
   });
+
+  describe('Vitest config file', () => {
+    describe('when vitest is selected', () => {
+      beforeEach(async () => {
+        const ctx = createCliContext({ projectPath: tmpDir, flags: { testRunner: 'vitest' } });
+        await withCliContext(ctx, () => {
+          createConfigFiles();
+        });
+      });
+
+      it('should create vitest.config.ts', () => {
+        expect(fs.existsSync(path.join(tmpDir, 'vitest.config.ts'))).toBe(true);
+      });
+    });
+  });
 });

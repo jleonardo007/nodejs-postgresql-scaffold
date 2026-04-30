@@ -14,6 +14,7 @@ export function createCliContext(overrides = {}) {
       addDocker: false,
       addGitHooks: false,
       linter: 'eslint',
+      testRunner: 'jest',
     },
   };
 
