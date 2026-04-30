@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
 import { execSync } from 'child_process';
-import { input, checkbox } from '@inquirer/prompts';
+import { input, checkbox, select } from '@inquirer/prompts';
 
 import {
   DEFAULTS,
@@ -64,6 +64,20 @@ async function main() {
       }),
     };
 
+    const linter = await select({
+      message: 'Linter / Formatter:',
+      choices: [
+        {
+          name: `${chalk.cyan('ESLint + Prettier')} ${chalk.dim('eslint · prettier · typescript-eslint')}`,
+          value: 'eslint',
+        },
+        {
+          name: `${chalk.cyan('Biome')} ${chalk.dim('all-in-one formatter + linter')}`,
+          value: 'biome',
+        },
+      ],
+    });
+
     const extras = await checkbox({
       message: 'Extend your scaffold:',
       choices: [
@@ -90,6 +104,7 @@ async function main() {
       flags: {
         addDocker,
         addGitHooks,
+        linter,
       },
     };
 
@@ -137,6 +152,7 @@ async function main() {
     ${chalk.dim('Path')} ${chalk.white(projectPath)}
     ${addDocker ? chalk.cyan('🐳 Docker enabled') : ''}
     ${addGitHooks ? chalk.cyan('🪝 Git Hooks enabled') : ''}
+    ${linter === 'eslint' ? chalk.cyan('🔍 ESLint + Prettier enabled') : chalk.cyan('🔍 Biome enabled')}
 
     ${chalk.bold('Next steps:')}
     ${chalk.cyan('$')} cd ${metadata.name} && npm install ${
