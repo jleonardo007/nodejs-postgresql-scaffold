@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildPackageJson, prettierConfig, tsconfig, nodemonConfig } from '#lib';
+import { buildPackageJson, prettierConfig, tsconfig, nodemonConfig, biomeJson } from '#lib';
 import { withCliContext } from '../helpers/cli-context';
 import { createCliContext } from '../fixtures/cli-context';
 
@@ -38,14 +38,8 @@ describe('NodemonConfig', () => {
 
 describe('Tsconfig', () => {
   it('should have correct include and exclude', () => {
-    expect(tsconfig.include).toEqual(['src/**/*', 'scripts/**/*']);
-    expect(tsconfig.exclude).toEqual([
-      'node_modules',
-      'dist',
-      'tests',
-      '**/*.spec.ts',
-      '**/*.test.ts',
-    ]);
+    expect(tsconfig.include).toEqual(['src/**/*', 'scripts/**/*', 'tests/**/*']);
+    expect(tsconfig.exclude).toEqual(['node_modules', 'dist']);
   });
 
   it('should have all correct compilerOptions', () => {
@@ -200,5 +194,117 @@ describe('PackageJson', async () => {
     expect(newPkg.devDependencies['@commitlint/cli']).toBeDefined();
     expect(newPkg.devDependencies['lint-staged']).toBeDefined();
     expect(newPkg.devDependencies.commitlint).toBeDefined();
+  });
+
+  it('should include eslint dependencies ', async () => {
+    let newPkg;
+    const newCtx = createCliContext({ flags: { linter: 'eslint' } });
+    await withCliContext(newCtx, async () => {
+      newPkg = await buildPackageJson();
+    });
+
+    expect(newPkg.devDependencies.eslint).toBeDefined();
+    expect(newPkg.devDependencies['@typescript-eslint/eslint-plugin']).toBeDefined();
+    expect(newPkg.devDependencies['@typescript-eslint/parser']).toBeDefined();
+    expect(newPkg.devDependencies['eslint-config-prettier']).toBeDefined();
+    expect(newPkg.devDependencies['typescript-eslint']).toBeDefined();
+    expect(newPkg.devDependencies['@biomejs/biome']).toBeUndefined();
+  });
+
+  it('should include biome dependencies ', async () => {
+    let newPkg;
+    const newCtx = createCliContext({ flags: { linter: 'biome' } });
+    await withCliContext(newCtx, async () => {
+      newPkg = await buildPackageJson();
+    });
+
+    expect(newPkg.devDependencies['@biomejs/biome']).toBeDefined();
+    expect(newPkg.devDependencies['@typescript-eslint/eslint-plugin']).toBeUndefined();
+    expect(newPkg.devDependencies['@typescript-eslint/parser']).toBeUndefined();
+    expect(newPkg.devDependencies['eslint-config-prettier']).toBeUndefined();
+    expect(newPkg.devDependencies['typescript-eslint']).toBeUndefined();
+  });
+});
+
+describe('BiomeConfig', () => {
+  it('should have all correct properties', () => {
+    expect(biomeJson).toEqual({
+      $schema: 'https://biomejs.dev/schemas/2.4.13/schema.json',
+      vcs: {
+        enabled: false,
+      },
+      files: {
+        includes: [
+          'src/**',
+          'scripts/**',
+          'tests/**',
+          '**/*.{js,cjs,mjs,json,md,yml,yaml}',
+          '!node_modules',
+          '!dist',
+          '!coverage',
+        ],
+      },
+      formatter: {
+        enabled: true,
+        indentStyle: 'space',
+        indentWidth: 2,
+        lineWidth: 100,
+        lineEnding: 'lf',
+      },
+      javascript: {
+        formatter: {
+          semicolons: 'always',
+          trailingCommas: 'es5',
+          quoteStyle: 'single',
+          arrowParentheses: 'always',
+          bracketSpacing: true,
+          quoteProperties: 'asNeeded',
+        },
+      },
+      linter: {
+        enabled: true,
+        rules: {
+          recommended: true,
+          suspicious: {
+            noExplicitAny: 'warn',
+            noDoubleEquals: 'error',
+            noConsole: {
+              level: 'warn',
+              options: { allow: ['warn', 'error'] },
+            },
+            noDebugger: 'error',
+            noImportAssign: 'error',
+          },
+          style: {
+            useConst: 'error',
+            noSubstr: 'error',
+            useAtIndex: 'error',
+            useNodejsImportProtocol: 'error',
+          },
+          correctness: {
+            noUnusedVariables: 'error',
+            noUnusedImports: 'error',
+          },
+          complexity: {
+            noUselessSwitchCase: 'error',
+            noForEach: 'error',
+            noUselessUndefined: 'error',
+          },
+        },
+      },
+      overrides: [
+        {
+          includes: ['src/database/migrations/**/*.ts', 'src/database/seeds/**/*.ts'],
+          linter: {
+            rules: {
+              suspicious: {
+                noExplicitAny: 'off',
+                noConsole: 'off',
+              },
+            },
+          },
+        },
+      ],
+    });
   });
 });

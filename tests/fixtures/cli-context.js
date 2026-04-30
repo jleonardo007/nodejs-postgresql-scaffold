@@ -13,6 +13,7 @@ export function createCliContext(overrides = {}) {
     flags: {
       addDocker: false,
       addGitHooks: false,
+      linter: 'eslint',
     },
   };
 

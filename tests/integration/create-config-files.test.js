@@ -131,4 +131,19 @@ describe('CreateConfigFiles', () => {
       });
     });
   });
+
+  describe('Biome file', () => {
+    describe('when biome is selected', () => {
+      beforeEach(async () => {
+        const ctx = createCliContext({ projectPath: tmpDir, flags: { linter: 'biome' } });
+        await withCliContext(ctx, () => {
+          createConfigFiles();
+        });
+      });
+
+      it('should create biome.json', () => {
+        expect(fs.existsSync(path.join(tmpDir, 'biome.json'))).toBe(true);
+      });
+    });
+  });
 });
