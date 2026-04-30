@@ -78,6 +78,20 @@ async function main() {
       ],
     });
 
+    const testRunner = await select({
+      message: 'Jest or Vitest:',
+      choices: [
+        {
+          name: `${chalk.cyan('Jest')} ${chalk.dim('jest')}`,
+          value: 'jest',
+        },
+        {
+          name: `${chalk.cyan('Vitest')} ${chalk.dim('vitest')}`,
+          value: 'vitest',
+        },
+      ],
+    });
+
     const extras = await checkbox({
       message: 'Extend your scaffold:',
       choices: [
@@ -105,6 +119,7 @@ async function main() {
         addDocker,
         addGitHooks,
         linter,
+        testRunner,
       },
     };
 
@@ -153,6 +168,7 @@ async function main() {
     ${addDocker ? chalk.cyan('🐳 Docker enabled') : ''}
     ${addGitHooks ? chalk.cyan('🪝 Git Hooks enabled') : ''}
     ${linter === 'eslint' ? chalk.cyan('🔍 ESLint + Prettier enabled') : chalk.cyan('🔍 Biome enabled')}
+    ${testRunner === 'jest' ? chalk.cyan('🧪 Jest enabled') : chalk.cyan('🧪 Vitest enabled')}
 
     ${chalk.bold('Next steps:')}
     ${chalk.cyan('$')} cd ${metadata.name} && npm install ${
