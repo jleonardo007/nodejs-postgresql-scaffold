@@ -24,6 +24,17 @@ import {
   sanitizeText,
 } from '#lib';
 
+const installCmds = {
+  npm: 'npm install',
+  yarn: 'yarn',
+  pnpm: 'pnpm install',
+};
+
+const installPmCmds = {
+  yarn: 'npm install -g yarn',
+  pnpm: 'npm install -g pnpm',
+};
+
 async function main() {
   try {
     console.log(
@@ -92,6 +103,15 @@ async function main() {
       ],
     });
 
+    const packageManager = await select({
+      message: 'Package manager:',
+      choices: [
+        { name: chalk.cyan('npm'), value: 'npm' },
+        { name: chalk.cyan('yarn'), value: 'yarn' },
+        { name: chalk.cyan('pnpm'), value: 'pnpm' },
+      ],
+    });
+
     const extras = await checkbox({
       message: 'Extend your scaffold:',
       choices: [
@@ -120,6 +140,7 @@ async function main() {
         addGitHooks,
         linter,
         testRunner,
+        packageManager,
       },
     };
 
@@ -150,9 +171,20 @@ async function main() {
 
     const excecOptions = { cwd: projectPath, stdio: 'inherit' };
 
+    // Install package manager if needed
+    if (packageManager !== 'npm') {
+      try {
+        execSync(`${packageManager} --version`, { stdio: 'ignore' });
+      } catch {
+        console.log(chalk.yellow(`\n⚠ ${packageManager} is not installed. Installing...`));
+        execSync(installPmCmds[packageManager], { stdio: 'inherit' });
+        console.log(chalk.green(`✅ ${packageManager} installed`));
+      }
+    }
+
     execSync('git init', excecOptions);
     console.log(chalk.cyan.bold('📦 Installing dependencies...'));
-    execSync('npm install', excecOptions);
+    execSync(installCmds[packageManager], excecOptions);
     console.log(chalk.green.bold('📦 Dependencies installed'));
 
     execSync('npm run format', excecOptions);
@@ -165,15 +197,12 @@ async function main() {
     ${chalk.green.bold('✅ Project created')}
     ${chalk.dim('Name')} ${chalk.white.bold(metadata.name)}
     ${chalk.dim('Path')} ${chalk.white(projectPath)}
-    ${addDocker ? chalk.cyan('🐳 Docker enabled') : ''}
-    ${addGitHooks ? chalk.cyan('🪝 Git Hooks enabled') : ''}
     ${linter === 'eslint' ? chalk.cyan('🔍 ESLint + Prettier enabled') : chalk.cyan('🔍 Biome enabled')}
     ${testRunner === 'jest' ? chalk.cyan('🧪 Jest enabled') : chalk.cyan('🧪 Vitest enabled')}
+    ${chalk.cyan(packageManager === 'yarn' ? '📦 Yarn enabled' : packageManager === 'pnpm' ? '📦 Pnpm enabled' : '📦 Npm enabled')}
+    ${addDocker ? chalk.cyan('🐳 Docker enabled') : ''}
+    ${addGitHooks ? chalk.cyan('🪝 Git Hooks enabled') : ''}
 
-    ${chalk.bold('Next steps:')}
-    ${chalk.cyan('$')} cd ${metadata.name} && npm install ${
-      addGitHooks ? `${chalk.dim('# prepare script runs husky install automatically')}` : ''
-    }
 `);
   } catch (error) {
     console.error(chalk.red('\n✖ Error:'), error.message);
