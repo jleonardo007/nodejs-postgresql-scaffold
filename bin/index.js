@@ -3,6 +3,7 @@
 import path from 'path';
 import fs from 'fs';
 import chalk from 'chalk';
+import figlet from 'figlet';
 import { execSync } from 'child_process';
 import { input, checkbox, select } from '@inquirer/prompts';
 
@@ -24,6 +25,11 @@ import {
   sanitizeText,
 } from '#lib';
 
+const banner = figlet.textSync('srvkit', {
+  font: 'Standard',
+  horizontalLayout: 'default',
+});
+
 const installCmds = {
   npm: 'npm install',
   yarn: 'yarn',
@@ -37,9 +43,8 @@ const installPmCmds = {
 
 async function main() {
   try {
-    console.log(
-      chalk.cyan.bold('\n  Backend Scaffold  ') + chalk.dim('Node · TypeScript · PostgreSQL\n')
-    );
+    console.log(chalk.cyan.bold(banner));
+    console.log(chalk.dim('  Node · TypeScript · PostgreSQL\n'));
 
     const metadata = {
       name: await input({

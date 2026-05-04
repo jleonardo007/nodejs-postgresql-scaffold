@@ -1,23 +1,23 @@
-# Express-Typescript scaffold
+# srvkit
 
-CLI tool to generate a complete backend project structure optimized for Node.js, Express, TypeScript, TypeORM, and PostgreSQL applications.
+CLI scaffold generator for Node.js backend projects with TypeScript, Express and PostgreSQL.
 
 ## Installation
 
 ```bash
-npm install -g nodejs-postgresql-scaffold
+npm install -g srvkit
 ```
 
-or in your local machine
+Or from your local machine:
 
 ```bash
-npm install -g ~/nodejs-postgresql-scaffold
+npm install -g ~/srvkit
 ```
 
 ## Usage
 
 ```bash
-create-backend
+srvkit-run
 ```
 
 The CLI will prompt you for:
@@ -27,13 +27,24 @@ The CLI will prompt you for:
 - Description
 - Author
 - License (default: MIT)
-- Add Docker (default: false)
-- Add Githooks (default: false)
+- Linter / Formatter (ESLint + Prettier / Biome)
+- Test runner (Jest / Vitest)
+- Package manager (npm / yarn / pnpm)
+- Extras: Docker, Git Hooks
 
 ## Generated Structure
 
 ```
 project-name/
+├── scripts/
+│   └── cli/
+│       ├── commands/
+│       │   ├── db.ts
+│       │   ├── migration.ts
+│       │   └── seed.ts
+│       ├── utils/
+│       │   └── excec.ts
+│       └── index.ts
 ├── src/
 │   ├── config/
 │   │   ├── database.ts
@@ -44,7 +55,7 @@ project-name/
 │   │   │   └── index.ts
 │   │   ├── seeds/
 │   │   │   └── index.ts
-│   │   └── datasource.ts
+│   │   └── data-source.ts
 │   ├── entities/
 │   │   └── index.ts
 │   ├── repositories/
@@ -53,20 +64,32 @@ project-name/
 │   │   └── index.ts
 │   ├── controllers/
 │   │   └── index.ts
-│   ├── middlewares/
+│   ├── logging/
+│   │   ├── adapters/
+│   │   │   └── typeorm.logger.ts
+│   │   ├── context/
+│   │   │   ├── async-context.ts
+│   │   │   └── get-request-id.ts
+│   │   ├── errors/
+│   │   │   └── error-handler.ts
+│   │   ├── middleware/
+│   │   │   ├── context.middleware.ts
+│   │   │   └── logging.middleware.ts
 │   │   └── index.ts
+│   ├── middlewares/
+│   │   ├── index.ts
 │   │   └── dto-validation.ts
-│   │   └── error-handler.ts
 │   ├── dtos/
 │   │   └── index.ts
 │   ├── routes/
-│   │   └── v1/
-│   │       └── index.ts
-│   ├── types/
+│   │   ├── v1/
+│   │   │   └── index.ts
 │   │   └── index.ts
+│   ├── types/
+│   │   ├── index.ts
 │   │   └── express.d.ts
 │   ├── utils/
-│   │   └── index.ts
+│   │   ├── index.ts
 │   │   └── database.ts
 │   ├── constants/
 │   │   └── index.ts
@@ -75,17 +98,18 @@ project-name/
 │   ├── queues/
 │   │   └── index.ts
 │   ├── exceptions/
-│   │   └── index.ts
-│   │   └── base-exception.ts
-│   │   └── conflict-exception.ts
-│   │   └── forbidden-exception.ts
-│   │   └── notfound-exception.ts
-│   │   └── unauthorized-exception.ts
+│   │   ├── index.ts
+│   │   ├── base-exception.ts
+│   │   ├── bad-request-exception.ts
+│   │   ├── conflict-exception.ts
+│   │   ├── forbidden-exception.ts
+│   │   ├── notfound-exception.ts
+│   │   ├── unauthorized-exception.ts
 │   │   └── validation-exception.ts
-│   ├── decorators/
-│   │   └── index.ts
 │   ├── docs/
 │   │   └── swagger.config.ts
+│   ├── scripts/
+│   │   └── seeds.ts
 │   ├── app.ts
 │   └── server.ts
 ├── tests/
@@ -107,40 +131,38 @@ project-name/
 ├── package.json
 ├── tsconfig.json
 ├── nodemon.json
-├── .prettierrc
-├── jest.config.js
-└── eslintrc.config.js
+├── .prettierrc or biome.json
+└── jest.config.cjs or vitest.config.ts
 ```
 
 ## Technology Stack
 
-This structure is optimized for:
-
-- **Node.js** - JavaScript runtime
-- **Express** - Web framework
-- **TypeScript** - Type-safe JavaScript
-- **TypeORM** - Database ORM
-- **PostgreSQL** - Relational database
+- **Node.js** — JavaScript runtime
+- **Express** — Web framework
+- **TypeScript** — Type-safe JavaScript
+- **TypeORM** — Database ORM
+- **PostgreSQL** — Relational database
 
 ## Folder Structure Explained
 
-- **config/** - Database, environment, logger configuration
-- **database/** - Migrations, seeds, and data source setup
-- **entities/** - TypeORM entity definitions
-- **repositories/** - Custom database repositories
-- **services/** - Business logic layer
-- **controllers/** - Route handlers
-- **middlewares/** - Express middlewares (auth, validation, error handling)
-- **dtos/** - Request validation schemas
-- **routes/** - API route definitions (versioned)
-- **types/** - TypeScript type definitions
-- **utils/** - Helper functions
-- **constants/** - Application constants
-- **jobs/** - Scheduled tasks (cron jobs)
-- **queues/** - Background job processors
-- **exceptions/** - Custom error classes
-- **decorators/** - Custom TypeScript decorators
-- **docs/** - API documentation (Swagger)
+- **scripts/cli/** — Database, migration and seed CLI commands
+- **config/** — Database, environment and logger configuration
+- **database/** — Migrations, seeds and data source setup
+- **entities/** — TypeORM entity definitions
+- **repositories/** — Custom database repositories
+- **services/** — Business logic layer
+- **controllers/** — Route handlers
+- **logging/** — Logger adapters, context, error handler and middleware
+- **middlewares/** — Express middlewares (validation, error handling)
+- **dtos/** — Request validation schemas
+- **routes/** — API route definitions (versioned)
+- **types/** — TypeScript type definitions
+- **utils/** — Helper functions
+- **constants/** — Application constants
+- **jobs/** — Scheduled tasks (cron jobs)
+- **queues/** — Background job processors
+- **exceptions/** — Custom error classes
+- **docs/** — API documentation (Swagger)
 
 ## Next Steps
 
@@ -148,14 +170,18 @@ After generation:
 
 ```bash
 cd your-project-name
-npm install
 cp .env.example .env
-npm run dev
+# install dependencies — handled automatically by the CLI
+# run migrations
+<pm> cli migration run
+# start the server
+<pm> dev
 ```
 
 ## Requirements
 
 - Node.js >= 22.0.0
+- PostgreSQL
 
 ## License
 
