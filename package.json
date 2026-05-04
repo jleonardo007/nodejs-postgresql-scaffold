@@ -1,6 +1,6 @@
 {
   "name": "srvkit",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "CLI scaffold generator for Node.js backend projects with TypeScript",
   "type": "module",
   "main": "index.js",
