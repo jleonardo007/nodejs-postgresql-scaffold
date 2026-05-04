@@ -161,4 +161,19 @@ describe('CreateConfigFiles', () => {
       });
     });
   });
+
+  describe('Pnpm config file', () => {
+    describe('when pnpm is selected', () => {
+      beforeEach(async () => {
+        const ctx = createCliContext({ projectPath: tmpDir, flags: { packageManager: 'pnpm' } });
+        await withCliContext(ctx, () => {
+          createConfigFiles();
+        });
+      });
+
+      it('should create vitest.config.ts', () => {
+        expect(fs.existsSync(path.join(tmpDir, 'pnpm-workspace.yaml'))).toBe(true);
+      });
+    });
+  });
 });
