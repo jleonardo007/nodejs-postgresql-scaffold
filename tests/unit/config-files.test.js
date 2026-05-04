@@ -305,6 +305,13 @@ describe('BiomeConfig', () => {
           },
         },
       ],
+      assist: {
+        actions: {
+          source: {
+            organizeImports: 'off',
+          },
+        },
+      },
     });
   });
 });

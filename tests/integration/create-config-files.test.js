@@ -176,4 +176,17 @@ describe('CreateConfigFiles', () => {
       });
     });
   });
+
+  describe('REAME', () => {
+    beforeEach(async () => {
+      const ctx = createCliContext({ projectPath: tmpDir });
+      await withCliContext(ctx, () => {
+        createConfigFiles();
+      });
+    });
+
+    it('should create README.md in root', () => {
+      expect(fs.existsSync(path.join(tmpDir, 'README.md'))).toBe(true);
+    });
+  });
 });
