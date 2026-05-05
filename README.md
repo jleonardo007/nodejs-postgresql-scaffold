@@ -1,6 +1,6 @@
-# srvkit
-
-CLI scaffold generator for Node.js backend projects with TypeScript, Express and PostgreSQL.
+<p align="center">
+  <img src="./assets/srvkit-logo.png" alt="srvkit logo" width="400"/>
+</p>
 
 ## Installation
 
